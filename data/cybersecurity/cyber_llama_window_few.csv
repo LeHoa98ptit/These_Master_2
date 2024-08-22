@@ -1,0 +1,10 @@
+Rule Name,Description,Cypher Query
+Unique neo4jImportId per node,Each node should have a unique `neo4jImportId` property.,"MATCH (n) WITH n.neo4jImportId AS id, COUNT(n) AS countNodes WHERE id IS NOT NULL AND countNodes = 1 RETURN COUNT(id) AS support"
+Unique objectid per node,Each node should have a unique `objectid` property.,"MATCH (n) WITH n.objectid AS id, COUNT(n) AS countNodes WHERE id IS NOT NULL AND countNodes = 1 RETURN COUNT(id) AS support"
+Allowed node labels,Only the specified labels are allowed for nodes.,MATCH (n) WHERE (n:User OR n:Group OR n:Domain OR n:OU OR n:GPO OR n:Computer) RETURN COUNT(n) AS support
+owned property consistency,The `owned` property should be a boolean value.,MATCH (n) WHERE EXISTS(n.owned) AND (n.owned = true OR n.owned = false) RETURN COUNT(n) AS support
+domain property consistency,The `domain` property should be a string value and match the format of a domain name.,MATCH (n) WHERE EXISTS(n.domain) AND toString(n.domain) = n.domain RETURN COUNT(n) AS support
+operatingsystem property consistency,The `operatingsystem` property should be a string value and match one of the expected operating system names.,MATCH (n) WHERE EXISTS(n.operatingsystem) AND toString(n.operatingsystem) = n.operatingsystem RETURN COUNT(n) AS support
+name property consistency,The `name` property should be a string value and match the format of a username or computer name.,MATCH (n) WHERE EXISTS(n.name) AND toString(n.name) = n.name RETURN COUNT(n) AS support
+enabled property consistency,The `enabled` property should be a boolean value.,MATCH (n) WHERE EXISTS(n.enabled) AND (n.enabled = true OR n.enabled = false) RETURN COUNT(n) AS support
+Relationship types consistency,"Only allowed relationship types are `HAS_SESSION`, `MEMBER_OF`, `CONTAINS`, `GP_LINK`, `ADMIN_TO`, `CAN_RDP`, `EXECUTE_DCOM`, `GENERIC_WRITE`, `GET_CHANGES`, `OWNS`, `WRITE_DACL`, and `WRITE_OWNER`.",MATCH ()-[r]->() WHERE (r:HAS_SESSION OR r:MEMBER_OF OR r:CONTAINS OR r:GP_LINK OR r:ADMIN_TO OR r:CAN_RDP OR r:EXECUTE_DCOM OR r:GENERIC_WRITE OR r:GET_CHANGES OR r:OWNS OR r:WRITE_DACL OR r:WRITE_OWNER) RETURN COUNT(r) AS support

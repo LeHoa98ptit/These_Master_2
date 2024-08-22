@@ -1,0 +1,11 @@
+Rule Name,Description,Cypher Query
+Unique Node IDs,Each node should have a unique `neo4jImportId`,"MATCH (n) WITH n.neo4jImportId AS id, COUNT(n) AS countNodes WHERE id IS NOT NULL AND countNodes = 1 RETURN COUNT(id) AS support"
+Domain Consistency,All nodes with a `domain` property should have a valid domain name,MATCH (n) WHERE EXISTS(n.domain) AND toString(n.domain) = n.domain RETURN COUNT(n) AS support
+Owned Property Consistency,The `owned` property should only be `True` or `False`,MATCH (n) WHERE EXISTS(n.owned) AND (n.owned = true OR n.owned = false) RETURN COUNT(n) AS support
+Enabled Property Consistency,The `enabled` property should only be `True` or `False`,MATCH (n) WHERE EXISTS(n.enabled) AND (n.enabled = true OR n.enabled = false) RETURN COUNT(n) AS support
+User Node Consistency,User nodes should have a valid `displayname` and `username`,MATCH (n:User) WHERE EXISTS(n.name) RETURN COUNT(n) AS support
+Computer Node Consistency,Computer nodes should have a valid `operatingsystem` and `domain`,MATCH (c:Computer) WHERE EXISTS(c.domain) RETURN COUNT(c) AS support
+Group Node Consistency,Group nodes should have a valid `displayname` and `domain`,MATCH (g:Group) WHERE EXISTS(g.domain) RETURN COUNT(g) AS support
+OU Node Consistency,OU nodes should have a valid `displayname` and `domain`,MATCH (ou:OU) WHERE EXISTS(ou.domain) RETURN COUNT(ou) AS valid_ou_nodes
+GPO Node Consistency,GPO nodes should have a valid `displayname` and `domain`,MATCH (g:GPO) WHERE EXISTS(g.domain) RETURN COUNT(g) AS valid_gpo_nodes
+Relationship Consistency,"Relationships should only connect nodes of compatible types (e.g., User-Computer, Group-User, etc.)",No Cypher Query available for Relationship Consistency

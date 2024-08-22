@@ -1,0 +1,6 @@
+Rule Name,Description,Cypher Query
+Unique neo4jImportId per node,Each node in the database should have a unique `neo4jImportId` value.,"MATCH (n) WITH n.neo4jImportId AS id, COUNT(n) AS countNodes WHERE id IS NOT NULL AND countNodes = 1 RETURN COUNT(id) AS support"
+Unique objectid per node,Each node in the database should have a unique `objectid` value.,"MATCH (n) WITH n.objectid AS id, COUNT(n) AS countNodes WHERE id IS NOT NULL AND countNodes = 1 RETURN COUNT(id) AS support"
+Allowed node labels,"Only the allowed node labels (`User`, `Group`, `Domain`, `OU`, `GPO`, and `Computer`) should be present in the database.",MATCH (n) WHERE (n:User OR n:Group OR n:Domain OR n:OU OR n:GPO OR n:Computer) RETURN COUNT(n) AS support
+Computer node membership,A `Computer` node should not have a relationship with a `Domain` node using the `MEMBER_OF` relationship.,MATCH (c:Computer)-[r:MEMBER_OF]->(d:Domain) RETURN COUNT(*) AS support
+GPO linkage,A `GPO` node should be linked to either a `Domain` node or an `OU` node through a relationship of `GP_LINKS`.,MATCH (g:GPO)-[:GP_LINK]->(target) WHERE (target:Domain OR target:OU) RETURN COUNT(DISTINCT g) AS support
