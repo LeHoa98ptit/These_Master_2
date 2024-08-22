@@ -1,0 +1,44 @@
+Name of Rule,Description,Cypher Query
+Unique Player Representation,Each player should be uniquely represented in the graph. This means that there should not be two nodes with the same `id` under the `REPRESENTS` relationship.,"
+        MATCH (p:Person)
+        WITH p.id AS id, COUNT(p) AS count
+        WHERE count = 1
+        RETURN COUNT(*) AS support
+        "
+Unique Squad Membership,A player cannot be in two different squads at the same time. This means that there should not be two `IN_SQUAD` relationships for the same player and different squads.,"
+        MATCH (p:Person)-[r:IN_SQUAD]->(s:Squad)
+        WITH p, r.startDate AS start_date, r.endDate AS end_date, COUNT(s) AS squad_count
+        WHERE squad_count = 1
+        RETURN p.id AS player_id, p.name AS player_name, start_date, end_date
+        ORDER BY start_date
+        "
+Unique Player-Squad Pairing,A player cannot be in the same squad more than once. This means that there should not be multiple `IN_SQUAD` relationships between the same player and the same squad.,"
+        MATCH (p:Person)-[r:IN_SQUAD]->(s:Squad)
+        WITH p, r.startDate AS start_date, r.endDate AS end_date, COUNT(s) AS squad_count
+        WHERE squad_count = 1
+        RETURN p.id AS player_id, p.name AS player_name, start_date, end_date
+        ORDER BY start_date
+        "
+Consistent Start and Substitution Minutes,"If a player is substituted in a game, the `minuteOn` value in the `PLAYED_IN` relationship should be less than the `minute` value in the `SCORED_GOAL` relationship (if it exists).","
+        MATCH (p:Person)-[pi:PLAYED_IN]->(m:Match)
+        WHERE EXISTS(pi.minuteOn) OR EXISTS(pi.minuteOff)
+        WITH p, m, COUNT(pi) AS substitution_count
+        WHERE substitution_count = 2
+        RETURN p.id AS player_id, p.name AS player_name,
+               m.id AS match_id, m.date AS match_date, substitution_count
+        "
+Unique Goal Scoring,"A player cannot score two goals in the same minute of the same game. This means that there should not be two `SCORED_GOAL` relationships for the same player, the same game, and the same minute.","
+        MATCH (p:Person)-[sg:SCORED_GOAL]->(m:Match)
+        WITH p, m, sg.minute AS goal_minute, COUNT(sg) AS goal_count
+        WHERE goal_count = 1
+        RETURN p.id AS player_id, p.name AS player_name,
+              m.id AS match_id, m.date AS match_date,
+              goal_minute AS scored_minute, goal_count AS number_of_goals
+        "
+Consistent Coach-Team Pairing,A coach cannot coach two different teams at the same time. This means that there should not be two `COACH_FOR` relationships for the same coach and different teams.,"
+        MATCH (p:Person)-[r:COACH_FOR]->(s:Squad)
+        WITH p, r.startDate AS start_date, r.endDate AS end_date, COUNT(s) AS team_count
+        WHERE team_count = 1
+        RETURN p.id AS coach_id, p.name AS coach_name, start_date, end_date
+        ORDER BY start_date
+        "

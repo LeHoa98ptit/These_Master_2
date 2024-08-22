@@ -1,0 +1,62 @@
+Rule Name,Description,Cypher Query
+Unique Match ID,Each Match node should have a unique id,"
+        MATCH (m:Match)
+        WITH m.id AS id, COUNT(m) AS count
+        WHERE count = 1
+        RETURN COUNT(*) AS support
+        "
+Valid Date Ranges,"Match dates should fall within a valid range (e.g., between 1900 and 2030)","
+        MATCH (m:Match)
+        WHERE m.date >= '1900-01-01' AND m.date <= '2030-12-31'
+        RETURN COUNT(*) AS support
+        "
+Consistent Stage Values,"Match stages should only have specific, pre-defined values (e.g., ""Group Stage"", ""Quarter Finals"", etc.)","
+        MATCH (m:Match)
+        WHERE m.stage NOT IN [
+          ""Group Matches"", 
+          ""First Stage"", 
+          ""First stage"", 
+          ""Round of 16"", 
+          ""Final"", 
+          ""Quarter Finals"", 
+          ""Quarter-final"", 
+          ""Match for third place"", 
+          ""Match for 3rd place"", 
+          ""Semifinals"", 
+          ""Semi-final"", 
+          ""Quarter-finals"", 
+          ""Semi-finals""
+        ]
+        RETURN m.id AS match_id, m.stage AS match_stage
+        "
+Valid Team Names,Team names should not be empty or null,"
+        MATCH (t:Team)
+        WHERE t.name IS NOT NULL
+        RETURN COUNT(*) AS support
+        "
+Unique Squad Names,Squad names should be unique within a tournament,"
+        MATCH (s:Squad)-[r:FOR]->(t:Tournament)
+        WITH t, s.properties.id AS squad_id, COUNT(DISTINCT s) AS count
+        WHERE count = 1
+        RETURN COUNT(DISTINCT t) AS support
+        "
+Person-Team Relationships,Each Person node should be associated with at most one Team node,"
+        MATCH (p:Person)-[:REPRESENTS]->(t:Team)
+        WITH p, COUNT(t) AS team_count
+        WHERE team_count <= 1
+        RETURN p.id AS person_id, p.name AS person_name, team_count
+        "
+Match-Team Relationships,Each Match node should be associated with exactly two Team nodes,"
+        MATCH (m:Match)<-[:PLAYED_IN]-(t:Team)
+        WITH m, COUNT(t) AS team_count
+        WHERE team_count = 2
+        RETURN m.id AS match_id, m.date AS match_date, team_count
+        "
+Valid Goal Scorers,A Person node can only score a goal in a Match node if they are part of the teams participating in that match,"
+        MATCH (p:Person)-[sg:SCORED_GOAL]->(m:Match)
+        MATCH (p)-[:REPRESENTS]->(t:Team)
+        MATCH (t)-[:PLAYED_IN]->(m)
+        WITH p, m, COUNT(t) AS valid_team_count
+        WHERE valid_team_count > 0
+        RETURN p.id AS person_id, p.name AS person_name, m.id AS match_id, m.date AS match_date
+        "

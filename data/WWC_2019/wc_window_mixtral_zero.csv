@@ -1,0 +1,63 @@
+name_of_rule,description,cypher_query
+Rule 1: Unique Tournament Identifier,Each tournament should have a unique identifier,"
+            MATCH (t:Tournament)
+            WITH t.id AS id, COUNT(t) AS count
+            WHERE count = 1
+            RETURN COUNT(*) AS support
+        "
+Rule 2: Unique Match Identifier within a Tournament,Each match should have a unique identifier within its respective tournament,"
+            MATCH (m:Match)-[:IN_TOURNAMENT]->(t:Tournament)
+            WITH t, m.id AS id, COUNT(DISTINCT m) AS count
+            WHERE count = 1
+            RETURN COUNT(DISTINCT t) AS support
+        "
+Rule 3: Unique Player Identifier,Each player should have a unique identifier,"
+            MATCH (p:Person)
+            WITH p.id AS id, COUNT(p) AS count
+            WHERE count = 1
+            RETURN COUNT(*) AS support
+        "
+Rule 4: Unique Squad within a Tournament,Each squad should have a unique identifier within its respective tournament. This rule ensures that there are no duplicate squad names in the same tournament,"
+            MATCH (s:Squad)-[r:FOR]->(t:Tournament)
+            WITH t, s.properties.id AS squad_id, COUNT(DISTINCT s) AS count
+            WHERE count = 1
+            RETURN COUNT(DISTINCT t) AS support
+        "
+Rule 5: Existence of Squad-Team Relationship,"For any given tournament, every team should be associated with a squad","
+            MATCH (t:Tournament)
+            MATCH (team:Team)
+            WHERE NOT EXISTS {
+                MATCH (team)-[:NAMED]->(s:Squad)
+                WHERE NOT EXISTS {
+                    (s)-[:FOR]->(t)
+                }
+            }
+            RETURN DISTINCT t.name AS tournament_name, team.name AS team_name
+        "
+Rule 6: Existence of Team-Match Relationships,A team should be involved in at least one match for each tournament they participate in,"
+            MATCH (t:Tournament)<-[:PARTICIPATED_IN]-(team:Team)
+            MATCH (team)-[:PLAYED_IN]->(match:Match)
+            WITH t, team, COUNT(match) AS matches
+            WHERE matches >=1
+            RETURN DISTINCT t.name AS tournament_name, team.name AS team_name
+        "
+Rule 7: Match Score Consistency,A match should have a score for both teams (no NULL values) if their match has a score defined,"
+            MATCH (m:Match)<-[r:PLAYED_IN]-(t:Team)
+            WITH m, COLLECT(r.score) AS scores
+            WHERE SIZE(scores) = 2 AND ALL(score IN scores WHERE score IS NOT NULL)
+            RETURN m AS match, scores
+        "
+Rule 8: Valid Player-Squad Relationship,"A player should be associated with a squad, and that squad should belong to the tournament for which the player has played a match","
+            MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)
+            MATCH (p)-[:PLAYED_IN]->(m:Match)
+            MATCH (m)-[:IN_TOURNAMENT]->(t:Tournament)
+            WHERE EXISTS {
+                MATCH (s)-[:FOR]->(t)
+            }
+            RETURN p.name AS person, s.name AS squad, t.name AS tournament
+        "
+Rule 9: Valid Player-Match Goal Relationship,A player should score a goal in a match only if they played in that match,"
+            MATCH (p:Person)-[:PLAYED_IN]->(m:Match)
+            MATCH (p)-[:SCORED_GOAL]->(m)
+            RETURN p.name AS player, m.date AS match_date
+        "

@@ -1,0 +1,45 @@
+Name of Rule,Description,Cypher Query
+Unique Node Representation,"Each node should have a unique representation (id) within its respective category (e.g., player, team, coach).","
+        MATCH (n)
+        WITH n.id AS id, COUNT(n) AS count
+        WHERE count = 1
+        RETURN id, count
+        "
+Consistent Node Labels,"Each node should have a consistent label based on its category (e.g., player, team, coach).","
+        // List of all expected labels
+        WITH ['Team', 'Person', 'Tournament', 'Match', 'Squad'] AS expected_labels
+
+        // Match all nodes and check if they have the correct label
+        MATCH (n)
+        WHERE ANY(label IN expected_labels WHERE label IN labels(n))
+        RETURN n.id AS id, labels(n) AS current_labels
+        "
+Valid Relationships (PERSON - COACH_FOR - Squad),Check if a coach can only be associated with one squad using COACH_FOR relationship.,"
+        MATCH (p:Person)-[r:COACH_FOR]->(s:Squad)
+        WITH p, r.startDate AS start_date, r.endDate AS end_date, COUNT(s) AS team_count
+        WHERE team_count = 1
+        RETURN p.id AS coach_id, p.name AS coach_name, start_date, end_date
+        ORDER BY start_date
+        "
+Valid Relationships (Person - IN_SQUAD - Squad),Ensure that a player is associated with only one squad using IN_SQUAD relationship.,"
+        MATCH (p:Person)-[r:IN_SQUAD]->(s:Squad)
+        WITH p, r.startDate AS start_date, r.endDate AS end_date, COUNT(s) AS squad_count
+        WHERE squad_count = 1
+        RETURN p.id AS player_id, p.name AS player_name, start_date, end_date
+        ORDER BY start_date
+        "
+IN_SQUAD Relationship Consistency,The IN_SQUAD relationship should only exist between a player and a team.,"
+        MATCH (p:Person)-[r:IN_SQUAD]->(s)
+        WHERE (s:Squad)
+        RETURN p.id AS player_id, p.name AS player_name, type(r) AS relationship_type, labels(s) AS node_labels
+        "
+COACH_FOR Relationship Consistency,The COACH_FOR relationship should only exist between a coach and a team.,"
+        MATCH (p:Person)-[r:COACH_FOR]->(s)
+        WHERE (s:Squad)
+        RETURN p.id AS person_id, p.name AS person_name, type(r) AS relationship_type, labels(s) AS node_labels
+        "
+REPRESENTS Relationship Consistency,The REPRESENTS relationship should only exist between a player/coach and a team.,"
+        MATCH (p:Person)-[r:REPRESENTS]->(t)
+        WHERE (t:Team)
+        RETURN p.id AS person_id, p.name AS person_name, type(r) AS relationship_type, labels(t) AS node_labels
+        "

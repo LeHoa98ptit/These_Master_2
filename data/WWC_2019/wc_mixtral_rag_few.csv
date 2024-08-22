@@ -1,0 +1,25 @@
+Name of Rule,Description,Cypher Query
+Unique Relationship Endpoints,"Each relationship should have unique nodes at its ends. This means that a relationship cannot connect the same two nodes more than once, regardless of the relationship type.","
+        MATCH (n1)-[r]->(n2)
+        WITH n1, n2, TYPE(r) AS rel_type, COUNT(r) AS count
+        WHERE count = 1
+        RETURN n1 AS start_node, n2 AS end_node, rel_type, count
+        "
+Valid Relationship Types,"The relationship types should match the node types they are connecting. For example, a 'PLAYED_IN' relationship should only connect a Person node to a Match node.","
+        MATCH (p:Person)-[r:PLAYED_IN]->(m)
+        WHERE (m:Match)
+        RETURN p.id AS player_id, p.name AS player_name, type(r) AS relationship_type, labels(m) AS node_labels
+        "
+Unique Player Representatives,Each 'Player' node should have only one 'REPRESENTS' relationship to a 'Person' node. This ensures that each player is represented by only one person.,"
+        MATCH (p:Person)-[r:REPRESENTS]->(t:Team)
+        WITH p, COUNT(r) AS count
+        WHERE count = 1
+        RETURN p AS player
+        "
+Player Minute On Consistency,"For 'PLAYED_IN' relationships with a 'minuteOn' property, the sum of 'minuteOn' for a player in a match should not exceed the total match minutes.",
+Player Type Consistency,"For 'PLAYED_IN' relationships, if a 'type' property is present, it should be consistent for all relationships of a player in a match.","
+        MATCH (p:Person)-[pi:PLAYED_IN]->(m:Match)
+        WITH p, m, COLLECT(pi.type) AS types
+        WHERE SIZE(types) = 1
+        RETURN p AS player, m AS match, types
+        "

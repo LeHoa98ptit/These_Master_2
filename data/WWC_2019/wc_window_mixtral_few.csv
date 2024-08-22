@@ -1,0 +1,53 @@
+Name of Rule,Description,Cypher Query
+Unique Match ID,Each Match node should have a unique id,"
+        MATCH (m:Match)
+        WITH m.id AS id, COUNT(m) AS count
+        WHERE count = 1
+        RETURN COUNT(*) AS support
+        "
+Match Date Uniqueness,Each Match node should have a unique date and stage within a specific tournament,"
+        MATCH (m:Match)-[:IN_TOURNAMENT]->(t:Tournament)
+        WITH t, m.date AS match_date, m.stage AS match_stage, COUNT(*) AS count
+        WHERE count = 1
+        RETURN t.name AS tournament_name, match_date, match_stage, count
+        "
+Unique Team Name,Each Team node should have a unique name within a specific tournament,"
+        MATCH (t:Team)
+        WHERE t.name IS NOT NULL
+        RETURN COUNT(*) AS support
+        "
+Unique Tournament Name,Each Tournament node should have a unique name,"
+        MATCH (t:Tournament)
+        WITH t.id AS id, COUNT(t) AS count
+        WHERE count = 1
+        RETURN COUNT(*) AS support
+        "
+Unique Squad,Each Squad node should have a unique id,"
+        MATCH (s:Squad)
+        WITH s.id AS id, COUNT(s) AS count
+        WHERE count = 1
+        RETURN COUNT(*) AS support
+        "
+Person-Squad Relationship Consistency,"Ensure that for each Person-Squad relationship, there is one and only one Squad that represents the Person","
+        MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)
+        WITH p, COUNT(s) AS squad_count
+        WHERE squad_count > 1
+        RETURN p.id AS person_id, p.name AS person_name, squad_count
+        "
+Match-Team-Tournament Relationship Consistency,"Ensure that for each Match-Team Relationship in a specific tournament, the Tournament node and Team node combinations are correct","
+        MATCH (t:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[:PLAYED_IN]-(team:Team)
+        WITH t, m, team, COUNT(*) AS count
+        WHERE count = 1
+        RETURN t.id AS tournament_id, t.name AS tournament_name, 
+               m.id AS match_id, m.date AS match_date, 
+               team.id AS team_id, team.name AS team_name, 
+               count AS relationship_count
+        "
+SCORED_GOAL Relationship Consistency,Ensure that no two SCORED_GOAL relationships between a Person and Match should have the same minute property,"
+        MATCH (p:Person)-[sg:SCORED_GOAL]->(m:Match)
+        WITH p, m, sg.minute AS goal_minute, COUNT(sg) AS count
+        WHERE count > 1
+        RETURN p.id AS person_id, p.name AS person_name, 
+               m.id AS match_id, m.date AS match_date, 
+               goal_minute AS scored_minute, count AS number_of_goals
+        "

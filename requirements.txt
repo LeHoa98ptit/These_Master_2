@@ -7,3 +7,7 @@ Jinja2==3.1.2
 MarkupSafe==2.1.1
 Werkzeug==2.2.2
 zipp==3.10.0
+pandas==2.0.1
+plotly==5.13.1
+streamlit==1.25.0
+streamlit networkx pyvis

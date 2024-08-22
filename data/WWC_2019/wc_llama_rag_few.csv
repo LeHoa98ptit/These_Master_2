@@ -1,0 +1,36 @@
+Name of Rule,Description,Cypher Query
+Unique Representation ID,Each REPRESENTS relationship should have a unique id.,"
+        MATCH (n)
+        WITH n.id AS id, COUNT(n) AS count
+        WHERE count = 1
+        RETURN id, count
+        "
+Consistent Squad Membership,A player can only be part of one squad at a time.,"
+        MATCH (p:Person)-[r:IN_SQUAD]->(s:Squad)
+        WITH p, r.startDate AS start_date, r.endDate AS end_date, COUNT(s) AS squad_count
+        WHERE squad_count = 1
+        RETURN p.id AS player_id, p.name AS player_name, start_date, end_date
+        ORDER BY start_date
+        "
+Valid Played In Relationships,A player can only play in one match at a time.,"
+        MATCH (p:Person)-[pi:PLAYED_IN]->(m:Match)
+        WITH p, pi, m, COUNT(pi) AS count
+        WHERE count = 1
+        RETURN p.id AS player_id, p.name AS player_name,
+              COLLECT(m.id) AS match_ids, COUNT(m) AS match_count
+        "
+Coaches Can Only Coach One Team,A coach can only coach one team at a time.,"
+        MATCH (p:Person)-[r:COACH_FOR]->(s:Squad)
+        WITH p, r.startDate AS start_date, r.endDate AS end_date, COUNT(s) AS team_count
+        WHERE team_count = 1
+        RETURN p.id AS coach_id, p.name AS coach_name, start_date, end_date
+        ORDER BY start_date
+        "
+Valid Goal Scoring,A player can only score one goal per match.,"
+        MATCH (p:Person)-[sg:SCORED_GOAL]->(m:Match)
+        WITH p, m, COUNT(sg) AS goal_count
+        WHERE goal_count = 1
+        RETURN p.id AS player_id, p.name AS player_name,
+              m.id AS match_id, m.date AS match_date, goal_count
+        "
+Subbed On/Off Consistency,A player can only be subbed on or off once per match.,

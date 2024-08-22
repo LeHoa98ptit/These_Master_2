@@ -1,0 +1,40 @@
+Rule,Description,Cypher query
+Rule 1: Unique Person ID,Each person node should have a unique `id` property,"MATCH (p:Person)
+WITH p.id AS id, COUNT(p) AS count
+WHERE count = 1
+RETURN COUNT(*) AS support"
+Rule 2: Person Node Properties,Each person node should have a `name` and `dob` property,"MATCH (p:Person)
+WHERE p.name IS NOT NULL AND p.dob IS NOT NULL
+RETURN COUNT(*) AS support"
+Rule 3: Unique Match ID,Each match node should have a unique `id` property,"MATCH (m:Match)
+WITH m.id AS id, COUNT(m) AS count
+WHERE count = 1
+RETURN COUNT(*) AS support"
+Rule 4: Match Node Properties,Each match node should have a `date` and `stage` property.,"MATCH (m:Match)
+WHERE m.date IS NOT NULL AND m.stage IS NOT NULL
+RETURN COUNT(*) AS support"
+Rule 5: Unique Squad ID,Each squad node should have a unique `id` property,"MATCH (s:Squad)
+WITH s.id AS id, COUNT(s) AS count
+WHERE count = 1
+RETURN COUNT(*) AS support"
+Rule 6: Squad Node Properties,Each squad node should have an `id` property,"MATCH (s:Squad)
+WITH s.id AS id, COUNT(s) AS count
+WHERE count = 1
+RETURN COUNT(*) AS support"
+Rule 7: Unique Team ID,Each team node should have a unique `id` property,"MATCH (t:Team)
+WITH t.id AS id, COUNT(t) AS count
+WHERE count = 1
+RETURN COUNT(*) AS support"
+Rule 8: Team Node Properties,Each team node should have a `name` property,"MATCH (t:Team)
+WHERE t.name IS NOT NULL
+RETURN COUNT(*) AS support"
+Rule 9: Person-Match Relationship,A person node can only be connected to a match node through a `PLAYED_IN` or `SCORED_GOAL` relationship,"MATCH (p:Person)-[:PLAYED_IN|SCORED_GOAL]->(m:Match)
+RETURN COUNT(DISTINCT p) AS support"
+Rule 10: Squad-Tournament Relationship,A squad node can only be connected to a tournament node through a `FOR` relationship,"MATCH (s:Squad)-[:FOR]->(t:Tournament)
+RETURN COUNT(DISTINCT s) AS support"
+Rule 11: Team-Squad Relationship,A team node can only be connected to a squad node through a `NAMED` relationship,"MATCH (t:Team)-[:NAMED]->(s:Squad)
+RETURN COUNT(DISTINCT t) AS support"
+Rule 12: Team-Tournament Relationship,A team node can only be connected to a tournament node through a `PARTICIPATED_IN` relationship,"MATCH (t:Team)-[:PARTICIPATED_IN]->(to:Tournament)
+RETURN COUNT(DISTINCT t) AS support"
+Rule 13: Match-Tournament Relationship,A match node can only be connected to a tournament node through an `IN_TOURNAMENT` relationship,"MATCH (m:Match)-[:IN_TOURNAMENT]->(t:Tournament)
+RETURN COUNT(DISTINCT m) AS support"

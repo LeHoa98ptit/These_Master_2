@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "8", "label": "Equatorial Guinea (ID: 8)", "shape": "dot", "title": "Equatorial Guinea (ID: 8)"}, {"color": "#97c2fc", "id": "2367", "label": "Match (ID: 2367, Date: 2011-06-29)", "shape": "dot", "title": "Match (ID: 2367, Date: 2011-06-29)"}, {"color": "#97c2fc", "id": "2210", "label": "Match (ID: 2210, Date: 2011-07-03)", "shape": "dot", "title": "Match (ID: 2210, Date: 2011-07-03)"}, {"color": "#97c2fc", "id": "2268", "label": "Match (ID: 2268, Date: 2011-07-06)", "shape": "dot", "title": "Match (ID: 2268, Date: 2011-07-06)"}, {"color": "#97c2fc", "id": "1074", "label": "Match (ID: 1074, Date: N/A)", "shape": "dot", "title": "Match (ID: 1074, Date: N/A)"}, {"color": "#97c2fc", "id": "0", "label": "Match (ID: 0, Date: N/A)", "shape": "dot", "title": "Match (ID: 0, Date: N/A)"}, {"color": "#97c2fc", "id": "9", "label": "Nigeria (ID: 9)", "shape": "dot", "title": "Nigeria (ID: 9)"}, {"color": "#97c2fc", "id": "7", "label": "Match (ID: 7, Date: N/A)", "shape": "dot", "title": "Match (ID: 7, Date: N/A)"}, {"color": "#97c2fc", "id": "2", "label": "Match (ID: 2, Date: N/A)", "shape": "dot", "title": "Match (ID: 2, Date: N/A)"}, {"color": "#97c2fc", "id": "5", "label": "Match (ID: 5, Date: N/A)", "shape": "dot", "title": "Match (ID: 5, Date: N/A)"}, {"color": "#97c2fc", "id": "1", "label": "Match (ID: 1, Date: N/A)", "shape": "dot", "title": "Match (ID: 1, Date: N/A)"}, {"color": "#97c2fc", "id": "3", "label": "Match (ID: 3, Date: N/A)", "shape": "dot", "title": "Match (ID: 3, Date: N/A)"}, {"color": "#97c2fc", "id": "6", "label": "Match (ID: 6, Date: N/A)", "shape": "dot", "title": "Match (ID: 6, Date: N/A)"}, {"color": "#97c2fc", "id": "4", "label": "Match (ID: 4, Date: N/A)", "shape": "dot", "title": "Match (ID: 4, Date: N/A)"}, {"color": "#97c2fc", "id": "1045", "label": "Match (ID: 1045, Date: N/A)", "shape": "dot", "title": "Match (ID: 1045, Date: N/A)"}, {"color": "#97c2fc", "id": "647", "label": "Match (ID: 647, Date: N/A)", "shape": "dot", "title": "Match (ID: 647, Date: N/A)"}, {"color": "#97c2fc", "id": "2129", "label": "Match (ID: 2129, Date: N/A)", "shape": "dot", "title": "Match (ID: 2129, Date: N/A)"}, {"color": "#97c2fc", "id": "1777", "label": "Match (ID: 1777, Date: N/A)", "shape": "dot", "title": "Match (ID: 1777, Date: N/A)"}, {"color": "#97c2fc", "id": "1362", "label": "Match (ID: 1362, Date: N/A)", "shape": "dot", "title": "Match (ID: 1362, Date: N/A)"}, {"color": "#97c2fc", "id": "365", "label": "Match (ID: 365, Date: N/A)", "shape": "dot", "title": "Match (ID: 365, Date: N/A)"}, {"color": "#97c2fc", "id": "1241", "label": "Match (ID: 1241, Date: N/A)", "shape": "dot", "title": "Match (ID: 1241, Date: N/A)"}, {"color": "#97c2fc", "id": "851", "label": "Match (ID: 851, Date: N/A)", "shape": "dot", "title": "Match (ID: 851, Date: N/A)"}, {"color": "#97c2fc", "id": "2207", "label": "Match (ID: 2207, Date: 2007-09-11)", "shape": "dot", "title": "Match (ID: 2207, Date: 2007-09-11)"}, {"color": "#97c2fc", "id": "2278", "label": "Match (ID: 2278, Date: 2007-09-18)", "shape": "dot", "title": "Match (ID: 2278, Date: 2007-09-18)"}, {"color": "#97c2fc", "id": "2398", "label": "Match (ID: 2398, Date: 2003-09-20)", "shape": "dot", "title": "Match (ID: 2398, Date: 2003-09-20)"}, {"color": "#97c2fc", "id": "2412", "label": "Match (ID: 2412, Date: 2019-06-08)", "shape": "dot", "title": "Match (ID: 2412, Date: 2019-06-08)"}, {"color": "#97c2fc", "id": "2302", "label": "Match (ID: 2302, Date: 2011-06-26)", "shape": "dot", "title": "Match (ID: 2302, Date: 2011-06-26)"}, {"color": "#97c2fc", "id": "2350", "label": "Match (ID: 2350, Date: 2015-06-12)", "shape": "dot", "title": "Match (ID: 2350, Date: 2015-06-12)"}, {"color": "#97c2fc", "id": "2227", "label": "Match (ID: 2227, Date: 2019-06-22)", "shape": "dot", "title": "Match (ID: 2227, Date: 2019-06-22)"}, {"color": "#97c2fc", "id": "2212", "label": "Match (ID: 2212, Date: 1991-11-19)", "shape": "dot", "title": "Match (ID: 2212, Date: 1991-11-19)"}, {"color": "#97c2fc", "id": "2324", "label": "Match (ID: 2324, Date: 2007-09-14)", "shape": "dot", "title": "Match (ID: 2324, Date: 2007-09-14)"}, {"color": "#97c2fc", "id": "2306", "label": "Match (ID: 2306, Date: 1999-06-27)", "shape": "dot", "title": "Match (ID: 2306, Date: 1999-06-27)"}, {"color": "#97c2fc", "id": "2211", "label": "Match (ID: 2211, Date: 2015-06-17)", "shape": "dot", "title": "Match (ID: 2211, Date: 2015-06-17)"}, {"color": "#97c2fc", "id": "2238", "label": "Match (ID: 2238, Date: 2003-09-25)", "shape": "dot", "title": "Match (ID: 2238, Date: 2003-09-25)"}, {"color": "#97c2fc", "id": "2428", "label": "Match (ID: 2428, Date: 1995-06-06)", "shape": "dot", "title": "Match (ID: 2428, Date: 1995-06-06)"}, {"color": "#97c2fc", "id": "2440", "label": "Match (ID: 2440, Date: 2019-06-17)", "shape": "dot", "title": "Match (ID: 2440, Date: 2019-06-17)"}, {"color": "#97c2fc", "id": "2291", "label": "Match (ID: 2291, Date: 1999-06-25)", "shape": "dot", "title": "Match (ID: 2291, Date: 1999-06-25)"}, {"color": "#97c2fc", "id": "2332", "label": "Match (ID: 2332, Date: 1995-06-08)", "shape": "dot", "title": "Match (ID: 2332, Date: 1995-06-08)"}, {"color": "#97c2fc", "id": "2383", "label": "Match (ID: 2383, Date: 1991-11-17)", "shape": "dot", "title": "Match (ID: 2383, Date: 1991-11-17)"}, {"color": "#97c2fc", "id": "2394", "label": "Match (ID: 2394, Date: 2011-06-30)", "shape": "dot", "title": "Match (ID: 2394, Date: 2011-06-30)"}, {"color": "#97c2fc", "id": "2221", "label": "Match (ID: 2221, Date: 1995-06-10)", "shape": "dot", "title": "Match (ID: 2221, Date: 1995-06-10)"}, {"color": "#97c2fc", "id": "2255", "label": "Match (ID: 2255, Date: 1999-06-21)", "shape": "dot", "title": "Match (ID: 2255, Date: 1999-06-21)"}, {"color": "#97c2fc", "id": "2391", "label": "Match (ID: 2391, Date: 1991-11-21)", "shape": "dot", "title": "Match (ID: 2391, Date: 1991-11-21)"}, {"color": "#97c2fc", "id": "2356", "label": "Match (ID: 2356, Date: 2019-06-12)", "shape": "dot", "title": "Match (ID: 2356, Date: 2019-06-12)"}, {"color": "#97c2fc", "id": "2284", "label": "Match (ID: 2284, Date: 2011-07-05)", "shape": "dot", "title": "Match (ID: 2284, Date: 2011-07-05)"}, {"color": "#97c2fc", "id": "2248", "label": "Match (ID: 2248, Date: 2003-09-28)", "shape": "dot", "title": "Match (ID: 2248, Date: 2003-09-28)"}, {"color": "#97c2fc", "id": "2296", "label": "Match (ID: 2296, Date: 2015-06-08)", "shape": "dot", "title": "Match (ID: 2296, Date: 2015-06-08)"}, {"color": "#97c2fc", "id": "2267", "label": "Match (ID: 2267, Date: 1999-07-02)", "shape": "dot", "title": "Match (ID: 2267, Date: 1999-07-02)"}, {"color": "#97c2fc", "id": "10", "label": "Australia (ID: 10)", "shape": "dot", "title": "Australia (ID: 10)"}, {"color": "#97c2fc", "id": "570", "label": "Match (ID: 570, Date: N/A)", "shape": "dot", "title": "Match (ID: 570, Date: N/A)"}, {"color": "#97c2fc", "id": "1646", "label": "Match (ID: 1646, Date: N/A)", "shape": "dot", "title": "Match (ID: 1646, Date: N/A)"}, {"color": "#97c2fc", "id": "250", "label": "Match (ID: 250, Date: N/A)", "shape": "dot", "title": "Match (ID: 250, Date: N/A)"}, {"color": "#97c2fc", "id": "2058", "label": "Match (ID: 2058, Date: N/A)", "shape": "dot", "title": "Match (ID: 2058, Date: N/A)"}, {"color": "#97c2fc", "id": "992", "label": "Match (ID: 992, Date: N/A)", "shape": "dot", "title": "Match (ID: 992, Date: N/A)"}, {"color": "#97c2fc", "id": "821", "label": "Match (ID: 821, Date: N/A)", "shape": "dot", "title": "Match (ID: 821, Date: N/A)"}, {"color": "#97c2fc", "id": "1181", "label": "Match (ID: 1181, Date: N/A)", "shape": "dot", "title": "Match (ID: 1181, Date: N/A)"}, {"color": "#97c2fc", "id": "2223", "label": "Match (ID: 2223, Date: 2003-09-29)", "shape": "dot", "title": "Match (ID: 2223, Date: 2003-09-29)"}, {"color": "#97c2fc", "id": "2408", "label": "Match (ID: 2408, Date: 2011-07-06)", "shape": "dot", "title": "Match (ID: 2408, Date: 2011-07-06)"}, {"color": "#97c2fc", "id": "2368", "label": "Match (ID: 2368, Date: 1995-06-10)", "shape": "dot", "title": "Match (ID: 2368, Date: 1995-06-10)"}, {"color": "#97c2fc", "id": "2272", "label": "Match (ID: 2272, Date: 2007-09-23)", "shape": "dot", "title": "Match (ID: 2272, Date: 2007-09-23)"}, {"color": "#97c2fc", "id": "2466", "label": "Match (ID: 2466, Date: 2019-06-18)", "shape": "dot", "title": "Match (ID: 2466, Date: 2019-06-18)"}, {"color": "#97c2fc", "id": "2386", "label": "Match (ID: 2386, Date: 2015-06-17)", "shape": "dot", "title": "Match (ID: 2386, Date: 2015-06-17)"}, {"color": "#97c2fc", "id": "2229", "label": "Match (ID: 2229, Date: 1999-06-20)", "shape": "dot", "title": "Match (ID: 2229, Date: 1999-06-20)"}, {"color": "#97c2fc", "id": "2407", "label": "Match (ID: 2407, Date: 2003-09-26)", "shape": "dot", "title": "Match (ID: 2407, Date: 2003-09-26)"}, {"color": "#97c2fc", "id": "2380", "label": "Match (ID: 2380, Date: 1995-06-08)", "shape": "dot", "title": "Match (ID: 2380, Date: 1995-06-08)"}, {"color": "#97c2fc", "id": "2327", "label": "Match (ID: 2327, Date: 2015-06-21)", "shape": "dot", "title": "Match (ID: 2327, Date: 2015-06-21)"}, {"color": "#97c2fc", "id": "2309", "label": "Match (ID: 2309, Date: 2015-06-27)", "shape": "dot", "title": "Match (ID: 2309, Date: 2015-06-27)"}, {"color": "#97c2fc", "id": "2369", "label": "Match (ID: 2369, Date: 2011-07-10)", "shape": "dot", "title": "Match (ID: 2369, Date: 2011-07-10)"}, {"color": "#97c2fc", "id": "2236", "label": "Match (ID: 2236, Date: 1999-06-26)", "shape": "dot", "title": "Match (ID: 2236, Date: 1999-06-26)"}, {"color": "#97c2fc", "id": "2430", "label": "Match (ID: 2430, Date: 2015-06-08)", "shape": "dot", "title": "Match (ID: 2430, Date: 2015-06-08)"}, {"color": "#97c2fc", "id": "2426", "label": "Match (ID: 2426, Date: 2007-09-12)", "shape": "dot", "title": "Match (ID: 2426, Date: 2007-09-12)"}, {"color": "#97c2fc", "id": "2243", "label": "Match (ID: 2243, Date: 2019-06-22)", "shape": "dot", "title": "Match (ID: 2243, Date: 2019-06-22)"}, {"color": "#97c2fc", "id": "2246", "label": "Match (ID: 2246, Date: 1999-06-24)", "shape": "dot", "title": "Match (ID: 2246, Date: 1999-06-24)"}, {"color": "#97c2fc", "id": "2213", "label": "Match (ID: 2213, Date: 2019-06-09)", "shape": "dot", "title": "Match (ID: 2213, Date: 2019-06-09)"}, {"color": "#97c2fc", "id": "2421", "label": "Match (ID: 2421, Date: 2019-06-13)", "shape": "dot", "title": "Match (ID: 2421, Date: 2019-06-13)"}, {"color": "#97c2fc", "id": "2441", "label": "Match (ID: 2441, Date: 2007-09-15)", "shape": "dot", "title": "Match (ID: 2441, Date: 2007-09-15)"}, {"color": "#97c2fc", "id": "2385", "label": "Match (ID: 2385, Date: 2007-09-20)", "shape": "dot", "title": "Match (ID: 2385, Date: 2007-09-20)"}, {"color": "#97c2fc", "id": "2280", "label": "Match (ID: 2280, Date: 1995-06-06)", "shape": "dot", "title": "Match (ID: 2280, Date: 1995-06-06)"}, {"color": "#97c2fc", "id": "2425", "label": "Match (ID: 2425, Date: 2011-06-29)", "shape": "dot", "title": "Match (ID: 2425, Date: 2011-06-29)"}, {"color": "#97c2fc", "id": "2270", "label": "Match (ID: 2270, Date: 2003-09-22)", "shape": "dot", "title": "Match (ID: 2270, Date: 2003-09-22)"}, {"color": "#97c2fc", "id": "11", "label": "Japan (ID: 11)", "shape": "dot", "title": "Japan (ID: 11)"}, {"color": "#97c2fc", "id": "1315", "label": "Match (ID: 1315, Date: N/A)", "shape": "dot", "title": "Match (ID: 1315, Date: N/A)"}, {"color": "#97c2fc", "id": "1135", "label": "Match (ID: 1135, Date: N/A)", "shape": "dot", "title": "Match (ID: 1135, Date: N/A)"}, {"color": "#97c2fc", "id": "959", "label": "Match (ID: 959, Date: N/A)", "shape": "dot", "title": "Match (ID: 959, Date: N/A)"}, {"color": "#97c2fc", "id": "158", "label": "Match (ID: 158, Date: N/A)", "shape": "dot", "title": "Match (ID: 158, Date: N/A)"}, {"color": "#97c2fc", "id": "521", "label": "Match (ID: 521, Date: N/A)", "shape": "dot", "title": "Match (ID: 521, Date: N/A)"}]);
+                  edges = new vis.DataSet([{"from": "8", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2367"}, {"from": "8", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2210"}, {"from": "8", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2268"}, {"from": "8", "label": "NAMED", "title": "NAMED", "to": "1074"}, {"from": "8", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "0"}, {"from": "2210", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "10"}, {"from": "0", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "9"}, {"from": "0", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "10"}, {"from": "0", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "9", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "7"}, {"from": "9", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "2"}, {"from": "9", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "5"}, {"from": "9", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "1"}, {"from": "9", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "3"}, {"from": "9", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "6"}, {"from": "9", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "4"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "1045"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "647"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "2129"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "1777"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "1362"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "365"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "1241"}, {"from": "9", "label": "NAMED", "title": "NAMED", "to": "851"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2207"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2278"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2398"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2412"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2302"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2350"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2227"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2212"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2324"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2306"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2211"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2238"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2428"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2440"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2291"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2332"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2383"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2394"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2221"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2255"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2391"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2356"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2284"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2248"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2296"}, {"from": "9", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2267"}, {"from": "7", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "10"}, {"from": "7", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "2", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "5", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "10"}, {"from": "5", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "1", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "10"}, {"from": "1", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "3", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "10"}, {"from": "3", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "6", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "10"}, {"from": "6", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "4", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "10"}, {"from": "4", "label": "PARTICIPATED_IN", "title": "PARTICIPATED_IN", "to": "11"}, {"from": "2350", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "10"}, {"from": "10", "label": "NAMED", "title": "NAMED", "to": "570"}, {"from": "10", "label": "NAMED", "title": "NAMED", "to": "1646"}, {"from": "10", "label": "NAMED", "title": "NAMED", "to": "250"}, {"from": "10", "label": "NAMED", "title": "NAMED", "to": "2058"}, {"from": "10", "label": "NAMED", "title": "NAMED", "to": "992"}, {"from": "10", "label": "NAMED", "title": "NAMED", "to": "821"}, {"from": "10", "label": "NAMED", "title": "NAMED", "to": "1181"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2223"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2408"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2368"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2272"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2466"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2386"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2229"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2407"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2380"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2327"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2309"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2369"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2236"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2430"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2426"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2243"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2246"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2213"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2421"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2441"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2385"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2280"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2425"}, {"from": "10", "label": "PLAYED_IN", "title": "PLAYED_IN", "to": "2270"}, {"from": "11", "label": "NAMED", "title": "NAMED", "to": "1315"}, {"from": "11", "label": "NAMED", "title": "NAMED", "to": "1135"}, {"from": "11", "label": "NAMED", "title": "NAMED", "to": "959"}, {"from": "11", "label": "NAMED", "title": "NAMED", "to": "158"}, {"from": "11", "label": "NAMED", "title": "NAMED", "to": "521"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
