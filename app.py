@@ -191,21 +191,33 @@ def generate_rules():
 
     # Placeholder for Few-shot prompt (you can add details here later)
     if prompt_option == "Few-shot prompt":
-        prompt_text = """
-            Examples of consistency Rules:
-            1. Unique Person ID: Each Person node should have a unique id.
-            2. Person Node Properties: Each Person node should have a name and dob.
-            3. Ensure that no two matches have the same date, stage, and tournament. This helps avoid duplicate matches within the same tournament.
-            Task: Generate new rules to ensure consistency and accuracy in the graph database, considering all node types and relationships. 
-            For each consistency rule you identify, provide a clear description of the rule and the corresponding Cypher query for checking
+        if graph_option == "Women's World Cup 2019":
+            prompt_text = """
+                        Examples of consistency Rules:
+                        1. Unique Person ID: Each Person node should have a unique id.
+                        2. Person Node Properties: Each Person node should have a name and dob.
+                        3. Ensure that no two matches have the same date, stage, and tournament. This helps avoid duplicate matches within the same tournament.
+                        Task: Generate new rules to ensure consistency and accuracy in the graph database, considering all node types and relationships. 
+                        For each consistency rule you identify, provide a clear description of the rule and the corresponding Cypher query for checking
 
-            Requirements:
-            Ensure data consistency across all nodes and relationships.
-            Avoid rules that apply to only one type of node or relationship broader context.
-        """
+                        Requirements:
+                        Ensure data consistency across all nodes and relationships.
+                        Avoid rules that apply to only one type of node or relationship broader context.
+                    """
+        elif graph_option == "CyberSecurity":
+            prompt_text = """
+                        Examples of consistency Rules:
+                        1. Unique IP Address: Each IP Address node should have a unique identifier.
+                        2. User Role Validation: Each User node should have a valid role assigned.
+                        3. Ensure that no two security events have the same timestamp and type to avoid duplicate records.
+                        Task: Generate new rules to ensure consistency and accuracy in the graph database, considering all node types and relationships. 
+                        For each consistency rule you identify, provide a clear description of the rule and the corresponding Cypher query for checking
+
+                        Requirements:
+                        Ensure data consistency across all nodes and relationships.
+                        Avoid rules that apply to only one type of node or relationship broader context.
+                    """
         st.write("Prompt for Few-shot:")
-
-        # Add your few-shot prompt here
         st.write(prompt_text)
 
     # Processing
@@ -278,13 +290,11 @@ def generate_rules():
             st.write("### Consistency Rules Table")
             st.dataframe(df_rules.style.set_properties(**{'width': '300px'}), width=1200)
 
-
         if graph_option == "CyberSecurity" and llm_option == "Mixtral" and prompt_option == "Few-shot prompt" and method_option == "RAG - Retrieval Augmented Generation":
             df_rules = pd.read_csv("data/cybersecurity/cyber_mixtral_rag_few.csv")
             # Show table
             st.write("### Consistency Rules Table")
             st.dataframe(df_rules.style.set_properties(**{'width': '300px'}), width=1200)
-
 
         if graph_option == "CyberSecurity" and llm_option == "Llama-3" and prompt_option == "Zero-shot prompt" and method_option == "Slide Window Attention":
             df_rules = pd.read_csv("data/cybersecurity/cyber_llama_window_zero.csv")
