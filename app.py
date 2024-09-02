@@ -207,13 +207,15 @@ def generate_rules():
         elif graph_option == "CyberSecurity":
             prompt_text = """
                         Examples of consistency Rules:
-                        1. Unique IP Address: Each IP Address node should have a unique identifier.
-                        2. User Role Validation: Each User node should have a valid role assigned.
-                        3. Ensure that no two security events have the same timestamp and type to avoid duplicate records.
+                        1. Unique `neo4jImportId` per node: Each node should have a unique `neo4jImportId` property
+                        2. Unique `objectid` per node: Each node should have a unique `objectid` property.
+                        3. Only allowed node labels are `User`, `Group`, `Domain`, `OU`, `GPO`, and `Computer`
+                    
                         Task: Generate new rules to ensure consistency and accuracy in the graph database, considering all node types and relationships. 
                         For each consistency rule you identify, provide a clear description of the rule and the corresponding Cypher query for checking
-
+                        
                         Requirements:
+                        
                         Ensure data consistency across all nodes and relationships.
                         Avoid rules that apply to only one type of node or relationship broader context.
                     """
