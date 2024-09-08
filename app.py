@@ -156,7 +156,7 @@ def generate_rules():
     # Choose method
     method_option = st.selectbox(
         "Select a method",
-        ["Slide Window Attention", "RAG - Retrieval Augmented Generation"]
+        ["Slice Window Attention", "RAG - Retrieval Augmented Generation"]
     )
 
     # Choose prompt
